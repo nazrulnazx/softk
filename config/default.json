@@ -1,0 +1,9 @@
+{
+    "mariaDb" :{
+        "name" : "softkliq",
+        "host" : "localhost",
+        "user" : "root",
+        "password" : "root"
+    },
+    "jwtSecret" : "someRandomSecret_Unknown_to_open"
+}

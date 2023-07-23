@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="title">client 1</title>
+</head>
+
+<body>
+
+  <p>client 1</p>
+  <ul id="message">
+
+  </ul>
+  <textarea id="text">{"id":1,"value":1}</textarea>
+  <br />
+  <button id="test">send</button>
+
+
+  <script src="https://cdn.socket.io/4.1.2/socket.io.min.js"
+    integrity="sha384-toS6mmwu70G0fw54EGlWWeA4z3dyJ+dlXBtSURSKN4vyRFOcxd3Bzjj/AoOwY+Rg"
+    crossorigin="anonymous"></script>
+  <script>
+
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
+    document.getElementById('title').innerHTML = "Client - " + params.from;
+    const socket = io('ws://192.168.0.110:5000/?from=' + params.from + '&token=' + params.token);
+
+    
+    socket.on("connect", () => {
+      // either with send()
+      socket.send("Hello!");
+    });
+
+    socket.on("greetings", (elem1) => {
+      console.log(elem1);
+    });
+
+    const btn = document.getElementById('test');
+    btn.addEventListener('click', () => {
+
+      socket.send(document.getElementById('text').value);
+      document.getElementById("message").innerHTML +=
+        "<li> Device :" + document.getElementById('text').value + "</li>";
+      document.getElementById('text').value = "";
+    });
+
+    // handle the event sent with socket.send()
+    socket.on("message", data => {
+      console.log(data);
+      let msssg = null;
+      try {
+        msssg = JSON.parse(event.msssg);
+        console.log(msssg);
+        msssg = JSON.stringify(msssg);
+      } catch (err) {
+        console.log('not a valid json');
+        msssg = event.msssg;
+      }
+      document.getElementById("message").innerHTML +=
+        "<li style='color:blue;'> " + params.from + " :" + msssg + "</li>";
+    });
+
+
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title id="title">client 1</title>
+  </head>
+  <body>
+    <p>client 1</p>
+    <ul id="message">
+
+    </ul>
+    <textarea id="text">{"id":1,"value":1}</textarea>
+    <br/>
+    <button id="test">send</button>
+    <!-- <div id="switch"  style="background-color:black;width: 100px; height: 100px;">
+      ONN
+    </div> -->
+    <script>
+      (function() {
+        window.onload = function() {
+          
+          const urlSearchParams = new URLSearchParams(window.location.search);
+          const params = Object.fromEntries(urlSearchParams.entries());
+
+          document.getElementById('title').innerHTML = "Client - " + params.from;
+          const socket = new WebSocket('ws://192.168.0.110:5000?from='+params.from+'&token='+params.token);
+
+          // Connection opened
+          socket.addEventListener('open', function(event) {
+            socket.send(params.from);
+          });
+
+          // Listen for messages
+          socket.addEventListener('message', function(event) {
+            let data = null;
+            try{
+              data = JSON.parse(event.data);
+              console.log(data);
+              data = JSON.stringify(data);
+            }catch(err){
+              console.log('not a valid json');
+              data = event.data;
+            }            
+            document.getElementById("message").innerHTML += 
+              "<li style='color:blue;'> "+params.from+" :"+data+"</li>";
+          });
+
+          const btn = document.getElementById('test');
+          btn.addEventListener('click', () => {
+
+            socket.send(document.getElementById('text').value);
+            document.getElementById("message").innerHTML += 
+              "<li> Device :"+document.getElementById('text').value+"</li>";
+            // document.getElementById('text').value = "";
+          });
+        };
+      })();
+    </script>
+
+    <script>
+      var t = "";
+      var s = 0;
+      var l = 0;
+      var led = false;
+      var f = 0;
+      function loop(){
+
+        if(s == 1){
+
+
+          if( f == 0 && led == false){
+              l = 1;t = "LED ONN";
+              led = true;
+          }
+
+          if(f == 1){
+              l = 0;t = "LED OFF";
+          }
+
+          if( f == 0){
+            f = 1;
+          }else{
+            f = 0;
+          }
+
+        }
+
+        console.log("Switch is "+s+" led is "+l+ "   "+t);
+      }
+     
+      setInterval(()=>{loop()},1000);
+
+
+
+
+    </script>
+  </body>
+</html>
